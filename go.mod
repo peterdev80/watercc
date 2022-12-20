@@ -1,4 +1,4 @@
-module watercc
+module github.com/peterdev80/watercc
 
 go 1.19
 

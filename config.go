@@ -1,4 +1,3 @@
-// package watercc абстракция для перехода от rabbit к интерфейсам watermill
 package watercc
 
 import (
