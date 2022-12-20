@@ -8,13 +8,6 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 )
 
-// Config конфигурация для использования pub/sub RabbitMQ.
-type Config struct {
-	AMQPURI  string // адрес для подключения к RabbitMQ
-	Topic    string // тема для публикации сообщений (только для Exchange topic)
-	Durrable bool   // флаг сохранения очереди RabbitMQ после его перезагрузки
-}
-
 // NewSubscriber возвращает инициализированного подписчика для получения сообщений на обработку.
 func NewSubscriber(amqpURI string, topic string, durrable bool) (message.Subscriber, error) { //nolint:ireturn
 	cfg := generateConfig(amqpURI, topic, durrable, false) // конфигурация для подписчика
