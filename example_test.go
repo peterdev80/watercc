@@ -52,15 +52,8 @@ func ExampleServer() {
 }
 
 func Example() {
-	// общая конфигурация для публикации/приёма сообщений
-	cfg := watercc.Config{
-		AMQPURI:  amqpURI,    // адрес для подключения
-		Topic:    "a1.a2.a3", // тема сообщений (использовать topic exchange)
-		Durrable: false,      // сохранение очереди не требуется
-	}
-
 	// инициализируем подписку на сообщения
-	subscriber, err := cfg.NewSubscriber()
+	subscriber, err := watercc.NewSubscriber(amqpURI, "a1.a2.a3", false)
 	if err != nil {
 		panic(err)
 	}
@@ -98,7 +91,7 @@ func Example() {
 	runtime.Gosched() // позволяем запуститься потоку
 
 	// инициализируем новый публикатор сообщений
-	publisher, err := cfg.NewPublisher()
+	publisher, err := watercc.NewPublisher(amqpURI, "a1.a2.a3", false)
 	if err != nil {
 		panic(err)
 	}
