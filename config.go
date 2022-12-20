@@ -8,33 +8,11 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 )
 
-// ExchangeType описывает тип Exchange в RabbitMQ.
-type ExchangeType int
-
-// Список поддерживаемых типов Exchange.
-const (
-	ExchangeFanout ExchangeType = iota // fanout
-	ExchangeTopic                      // topic
-)
-
-// String возвращает строку с названием типа RabbitMQ Exchange.
-func (ex ExchangeType) String() string {
-	switch ex {
-	case ExchangeFanout:
-		return "fanout"
-	case ExchangeTopic:
-		return "topic"
-	default:
-		return ""
-	}
-}
-
 // Config конфигурация для использования pub/sub RabbitMQ.
 type Config struct {
-	AMQPURI      string       // адрес для подключения к RabbitMQ
-	ExchangeType ExchangeType // тип exchange
-	Topic        string       // ключ для публикации сообщений
-	Durrable     bool         // флаг сохранения очереди RabbitMQ после его перезагрузки
+	AMQPURI  string // адрес для подключения к RabbitMQ
+	Topic    string // тема для публикации сообщений (только для Exchange topic)
+	Durrable bool   // флаг сохранения очереди RabbitMQ после его перезагрузки
 }
 
 // NewSubscriber возвращает инициализированного подписчика для получения сообщений на обработку.
@@ -80,7 +58,7 @@ func (w Config) generate(isPublisher bool) amqp.Config {
 	}
 
 	// дополнительные настройки для поддержки topic
-	if w.ExchangeType == ExchangeTopic {
+	if w.Topic != "" {
 		cfg.Exchange.Type = "topic"
 
 		// функция, возвращающая названия ключа публикации

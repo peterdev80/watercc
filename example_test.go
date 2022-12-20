@@ -6,9 +6,11 @@ import (
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/peterdev80/watercc"
+
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
-	"watercc"
 )
 
 // amqpURI описывает адрес для подключения к RabbitMQ.
@@ -52,10 +54,9 @@ func ExampleServer() {
 func Example() {
 	// общая конфигурация для публикации/приёма сообщений
 	cfg := watercc.Config{
-		AMQPURI:      amqpURI,               // адрес для подключения
-		ExchangeType: watercc.ExchangeTopic, // тип точки обмена
-		Topic:        "a1.a2.a3",            // тема сообщений
-		Durrable:     false,                 // сохранение очереди не требуется
+		AMQPURI:  amqpURI,    // адрес для подключения
+		Topic:    "a1.a2.a3", // тема сообщений (использовать topic exchange)
+		Durrable: false,      // сохранение очереди не требуется
 	}
 
 	// инициализируем подписку на сообщения
