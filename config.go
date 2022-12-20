@@ -16,8 +16,8 @@ type Config struct {
 }
 
 // NewSubscriber возвращает инициализированного подписчика для получения сообщений на обработку.
-func (w Config) NewSubscriber() (message.Subscriber, error) { //nolint:ireturn
-	cfg := w.generate(false) // конфигурация для подписчика
+func (c Config) NewSubscriber() (message.Subscriber, error) { //nolint:ireturn
+	cfg := c.generate(false) // конфигурация для подписчика
 
 	// инициализируем подписчика
 	subscriber, err := amqp.NewSubscriber(cfg, logger)
@@ -29,8 +29,8 @@ func (w Config) NewSubscriber() (message.Subscriber, error) { //nolint:ireturn
 }
 
 // NewPublisher сгенерировать издателя.
-func (w Config) NewPublisher() (message.Publisher, error) { //nolint:ireturn
-	cfg := w.generate(true) // конфигурация для публикатора
+func (c Config) NewPublisher() (message.Publisher, error) { //nolint:ireturn
+	cfg := c.generate(true) // конфигурация для публикатора
 
 	// инициализируем публикатора
 	publisher, err := amqp.NewPublisher(cfg, logger)
@@ -42,7 +42,7 @@ func (w Config) NewPublisher() (message.Publisher, error) { //nolint:ireturn
 }
 
 // generate возвращает конфигурацию для работы с RabbitMQ.
-func (w Config) generate(isPublisher bool) amqp.Config {
+func (c Config) generate(isPublisher bool) amqp.Config {
 	// генератор название очереди
 	var queueNameGenerator amqp.QueueNameGenerator
 	if !isPublisher {
@@ -51,18 +51,18 @@ func (w Config) generate(isPublisher bool) amqp.Config {
 
 	// генерируем конфигурацию по умолчанию
 	var cfg amqp.Config
-	if w.Durrable {
-		cfg = amqp.NewDurablePubSubConfig(w.AMQPURI, queueNameGenerator)
+	if c.Durrable {
+		cfg = amqp.NewDurablePubSubConfig(c.AMQPURI, queueNameGenerator)
 	} else {
-		cfg = amqp.NewNonDurablePubSubConfig(w.AMQPURI, queueNameGenerator)
+		cfg = amqp.NewNonDurablePubSubConfig(c.AMQPURI, queueNameGenerator)
 	}
 
 	// дополнительные настройки для поддержки topic
-	if w.Topic != "" {
+	if c.Topic != "" {
 		cfg.Exchange.Type = "topic"
 
 		// функция, возвращающая названия ключа публикации
-		routingKeyFunc := amqp.GenerateQueueNameConstant(w.Topic)
+		routingKeyFunc := amqp.GenerateQueueNameConstant(c.Topic)
 		if isPublisher {
 			cfg.Publish.GenerateRoutingKey = routingKeyFunc
 		} else {
@@ -81,9 +81,7 @@ func (w Config) generate(isPublisher bool) amqp.Config {
 // Это вспомогательная функция для вызова [message.NewRouter] с настройками по умолчанию и стандартным логом.
 func NewRouter() (*message.Router, error) {
 	//nolint:wrapcheck
-	return message.NewRouter(message.RouterConfig{
-		CloseTimeout: 0,
-	}, logger)
+	return message.NewRouter(message.RouterConfig{CloseTimeout: 0}, logger)
 }
 
 // logger используется для вывода информации в лог для всего пакета.
