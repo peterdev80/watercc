@@ -68,11 +68,10 @@ func generateConfig(amqpURI string, topic string, durrable, isPublisher bool) am
 		} else {
 			cfg.QueueBind.GenerateRoutingKey = routingKeyFunc
 		}
-	}
 
-	// FIXME: действительно ли нужен эксклюзивный доступ к очереди?
-	// Даже если запускается несколько сервисов для обработки сообщений из очереди?
-	cfg.Queue.Exclusive = true
+		// в случае поддержки topic очередь регистрируется с эксклюзивным доступом
+		cfg.Queue.Exclusive = true
+	}
 
 	return cfg // возвращаем конфигурацию
 }
